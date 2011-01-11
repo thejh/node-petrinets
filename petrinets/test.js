@@ -5,7 +5,7 @@ var p2 = new petrinets.Place('p-2');
 var t1 = new petrinets.Transition('t-1');
 petrinets.link(p1, t1);
 petrinets.link(t1, p2);
-p2.setTokens(2);
+p1.setTokens(2);
 
 console.log('');
 console.log('INITIALIZED');

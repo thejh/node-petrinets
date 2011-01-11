@@ -26,11 +26,11 @@ function Place(name) {
 
   function tick() {
     for (var i=0; i<that.outputs.length; i++) {
-      outputs[i].emit('tick');
+      that.outputs[i].emit('tick');
     }
   }
 
-  function isReady() {
+  this.isReady = function() {
     return tokens>0;
   }
 
@@ -46,8 +46,8 @@ function Transition(name) {
   this.outputs = [];
 
   this.isReady = function() {
-    for (var i=0; i<inputs.length; i++) {
-      if (!inputs[i].isReady()) {
+    for (var i=0; i<this.inputs.length; i++) {
+      if (!this.inputs[i].isReady()) {
         return false;
       }
     }
@@ -55,18 +55,21 @@ function Transition(name) {
   }
 
   function fire() {
-    for (var i=0; i<inputs.length; i++) {
-      inputs[i].setTokens(inputs[i].getTokens()-1);
+    for (var i=0; i<this.inputs.length; i++) {
+      this.inputs[i].setTokens(this.inputs[i].getTokens()-1);
     }
     for (var i=0; i<outputs.length; i++) {
-      outputs[i].setTokens(outputs[i].getTokens()+1);
+      this.outputs[i].setTokens(this.outputs[i].getTokens()+1);
     }
   }
 
   this.on('tick', function() {
-   if (isReady()) {
-    fire();
-   }
+    if (config.debug) {
+      console.log('tick was called on "'+name+'"');
+    }
+    if (this.isReady()) {
+     fire();
+    }
   });
 
   if (config.debug) {
