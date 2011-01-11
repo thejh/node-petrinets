@@ -29,9 +29,11 @@ function Place(name) {
   }
 
   function tick() {
-    for (var i=0; i<that.outputs.length; i++) {
-      that.outputs[i].emit('tick');
-    }
+    process.nextTick(function() {
+      for (var i=0; i<that.outputs.length; i++) {
+        that.outputs[i].emit('tick');
+      }
+    });
   }
 
   this.isReady = function() {
@@ -45,15 +47,16 @@ function Place(name) {
 
 function Transition(name) {
   this.__proto__ = EventEmitter.prototype;
+  var that = this;
 
   this.inputs = [];
   this.outputs = [];
 
   this.isReady = function() {
-    for (var i=0; i<this.inputs.length; i++) {
-      if (!this.inputs[i].isReady()) {
+    for (var i=0; i<that.inputs.length; i++) {
+      if (!that.inputs[i].isReady()) {
         if (config.debug) {
-          console.log('transition "'+name+'" isn\'t ready because of "'+this.inputs[i].getName()+'" ('+this.inputs[i].getTokens()+')');
+          console.log('transition "'+name+'" isn\'t ready because of "'+that.inputs[i].getName()+'" ('+that.inputs[i].getTokens()+')');
         }
         return false;
       }
@@ -65,19 +68,20 @@ function Transition(name) {
     if (config.debug) {
       console.log('transition "'+name+'" fired');
     }
-    for (var i=0; i<this.inputs.length; i++) {
-      this.inputs[i].setTokens(this.inputs[i].getTokens()-1);
+    for (var i=0; i<that.inputs.length; i++) {
+      that.inputs[i].setTokens(that.inputs[i].getTokens()-1);
     }
-    for (var i=0; i<outputs.length; i++) {
-      this.outputs[i].setTokens(this.outputs[i].getTokens()+1);
+    for (var i=0; i<that.outputs.length; i++) {
+      that.outputs[i].setTokens(that.outputs[i].getTokens()+1);
     }
+    that.emit('tick');
   }
 
   this.on('tick', function() {
     if (config.debug) {
       console.log('tick was called on "'+name+'"');
     }
-    if (this.isReady()) {
+    if (that.isReady()) {
      fire();
     }
   });
