@@ -16,4 +16,4 @@ setTimeout(function() {
   console.log('');
   console.log('RESULTS');
   console.log('p1:'+p1.getTokens()+', p2:'+p2.getTokens());
-}, 10000);
+}, 5000);

@@ -14,6 +14,10 @@ function Place(name) {
     return tokens;
   }
 
+  this.getName = function() {
+    return name;
+  }
+
   this.setTokens = function(n) {
     if (n>tokens) {
       if (config.debug) {
@@ -48,6 +52,9 @@ function Transition(name) {
   this.isReady = function() {
     for (var i=0; i<this.inputs.length; i++) {
       if (!this.inputs[i].isReady()) {
+        if (config.debug) {
+          console.log('transition "'+name+'" isn\'t ready because of "'+this.inputs[i].getName()+'" ('+this.inputs[i].getTokens()+')');
+        }
         return false;
       }
     }
@@ -55,6 +62,9 @@ function Transition(name) {
   }
 
   function fire() {
+    if (config.debug) {
+      console.log('transition "'+name+'" fired');
+    }
     for (var i=0; i<this.inputs.length; i++) {
       this.inputs[i].setTokens(this.inputs[i].getTokens()-1);
     }
